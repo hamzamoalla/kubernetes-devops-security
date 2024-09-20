@@ -1,6 +1,8 @@
 pipeline {
   agent any
-
+  tools {
+        maven 'maven' // Specify the version of Maven you want to use
+  }
   stages {
       stage('Build Artifact') {
             steps {
