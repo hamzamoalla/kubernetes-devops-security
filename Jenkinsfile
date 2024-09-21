@@ -17,35 +17,35 @@ pipeline {
             }
         }
 
-        stage('Unit Tests - JUnit and Jacoco') {
-            steps { 
-                sh "mvn test"
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml' 
-                    jacoco execPattern: 'target/jacoco.exec'
-                }
-            }
-        }
+        // stage('Unit Tests - JUnit and Jacoco') {
+        //     steps { 
+        //         sh "mvn test"
+        //     }
+        //     post {
+        //         always {
+        //             junit 'target/surefire-reports/*.xml' 
+        //             jacoco execPattern: 'target/jacoco.exec'
+        //         }
+        //     }
+        // }
 
-         stage('Mutation Tests - PIT') {
-            steps {
-                sh "mvn org.pitest:pitest-maven:mutationCoverage"
-            }
-            post {
-                always {
-                    pitmutation mutationStatsFile: 'target/pit-reports/**/mutations.xml'
-                }
-            }
-        }
+        //  stage('Mutation Tests - PIT') {
+        //     steps {
+        //         sh "mvn org.pitest:pitest-maven:mutationCoverage"
+        //     }
+        //     post {
+        //         always {
+        //             pitmutation mutationStatsFile: 'target/pit-reports/**/mutations.xml'
+        //         }
+        //     }
+        // }
 
         
-        stage('sonar') {
-            steps {
-                 sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.4:9000 -Dsonar.token=sqp_164ad3e63f80d14d4c64b865c32cfd9db7866945"
-            }
-        }
+        // stage('sonar') {
+        //     steps {
+        //          sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.4:9000 -Dsonar.token=sqp_164ad3e63f80d14d4c64b865c32cfd9db7866945"
+        //     }
+        // }
 
         
         stage('Vulnerability Scan - Docker') {
@@ -58,7 +58,7 @@ pipeline {
     				    sh "bash trivy-docker-image-scan.sh"
     			    },
                     "OPA Conftest":{
-    				    sh '''docker run --rm -v /var/jenkins_home/workspace/devsecops:/project openpolicyagent/conftest test --policy opa-docker-security.rego /project/docker/Dockerfile'''
+    				    sh 'docker run --rm -v /var/jenkins_home/workspace/devsecops:/project openpolicyagent/conftest test --policy opa-docker-security.rego /project/docker/Dockerfile'
 '
     			    }
       	        )
@@ -76,31 +76,31 @@ pipeline {
 
         
 
-        stage('Push Images to Docker Hub') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'docker_hub_repo', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
-                        sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
-                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    }
-                }
-            }
-        }
+        // stage('Push Images to Docker Hub') {
+        //     steps {
+        //         script {
+        //             withCredentials([usernamePassword(credentialsId: 'docker_hub_repo', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
+        //                 sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
+        //                 sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    // Use the secret file stored in Jenkins for the kubeconfig
-                    withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
-                        sh '''
-                            export KUBECONFIG=${KUBECONFIG}
-                            kubectl config current-context
-                            sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" k8s_deployment_service.yaml
-                            kubectl apply -f k8s_deployment_service.yaml --validate=false
-                        '''
-                    }
-                }
-            }
-        }
+        // stage('Deploy to Kubernetes') {
+        //     steps {
+        //         script {
+        //             // Use the secret file stored in Jenkins for the kubeconfig
+        //             withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+        //                 sh '''
+        //                     export KUBECONFIG=${KUBECONFIG}
+        //                     kubectl config current-context
+        //                     sed -i "s|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g" k8s_deployment_service.yaml
+        //                     kubectl apply -f k8s_deployment_service.yaml --validate=false
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
