@@ -44,7 +44,17 @@ pipeline {
                  sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.4:9000 -Dsonar.token=sqp_164ad3e63f80d14d4c64b865c32cfd9db7866945"
             }
         }
-
+        
+        stage('Vulnerability Scan Docker ') {
+            steps {
+                sh "mvn dependency-check: check"
+            }
+            post {
+                always {
+                    -dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+                }
+            }
+        }
         
        
 
