@@ -58,7 +58,7 @@ pipeline {
     				    sh "bash trivy-docker-image-scan.sh"
     			    },
                     "OPA Conftest":{
-    				    sh 'docker run --rm -v /var/jenkins_home/workspace/devsecops:/project openpolicyagent/conftest test --policy opa-docker-security.rego /project/docker/Dockerfile'
+    				    sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego /kubernetes-devops-security/Dockerfile'
     			    }
       	        )
             }
