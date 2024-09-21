@@ -45,5 +45,21 @@ pipeline {
                 }
             }
         }
+
+      stage('Deploy to kubernetes') {
+          steps {
+              script {
+                  // Using the secret file stored in Jenkins for the kubeconfig
+                  withCredentials([file(credentialsId: 'kubeconfig-minikube.txt', variable: 'KUBECONFIG')]) {
+                      sh '''
+                        
+                        export KUBECONFIG=${KUBECONFIG}
+                        kubectl config current-context
+                        kubectl apply -f k8s_deployment_service.yaml
+                      '''
+                  }
+              }
+          }
+      }
     }
 }
