@@ -12,51 +12,53 @@ pipeline {
     stages {
         stage('Build Artifact') {
             steps {
-              sh "mvn clean package -DskipTests=true"
-              archive 'target/*.jar' //so that they can be downloaded later
+                sh "mvn clean package -DskipTests=true"
+                archiveArtifacts artifacts: 'target/*.jar' // Archive the JAR file
             }
         }
 
-      stage('Unit Tests - JUnit and Jacoco') {
-            steps { 
-              sh "mvn test"
-            }
-            post {
-              always {
-                junit 'target/surefire-reports/*.xml' 
-                jacoco execPattern: 'target/jacoco.exec'
-              }
-            }
-      }
-    
-        stage('Mutation Tests - PIT') {
+        stage('Unit Tests - JUnit and Jacoco') {
             steps {
-                sh "mvn org.pitest: pitest-maven: mutationCoverage"
+                sh "mvn test"
             }
             post {
                 always {
-                    pitmutation mutationStatsFile:-***/target/pit-reports/**/mutations.xml'
+                    junit 'target/surefire-reports/*.xml'
+                    jacoco execPattern: 'target/jacoco.exec'
                 }
             }
         }
 
-      stage('Build Variable Image') {
+        stage('Mutation Tests - PIT') {
+            steps {
+                sh "mvn org.pitest:pitest-maven:mutationCoverage"
+            }
+            post {
+                always {
+                    pitmutation mutationStatsFile: 'target/pit-reports/**/mutations.xml'
+                }
+            }
+        }
+
+        stage('Build Variable Image') {
             steps {
                 script {
                     sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 }
             }
         }
-      stage('Push Images to Docker Hub') {
+
+        stage('Push Images to Docker Hub') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker_hub_repo', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
-                        sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
+                        sh "echo \$DOCKER_HUB_PASSWORD | docker login -u \$DOCKER_HUB_USERNAME --password-stdin"
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
