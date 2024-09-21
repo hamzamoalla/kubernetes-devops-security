@@ -39,6 +39,14 @@ pipeline {
                 }
             }
         }
+        stage('Build Artifact') {
+            steps {
+                 sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqp_164ad3e63f80d14d4c64b865c32cfd9db7866945"
+            }
+        }
+
+        
+       
 
         stage('Build Variable Image') {
             steps {
