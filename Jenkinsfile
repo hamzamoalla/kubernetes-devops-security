@@ -59,7 +59,6 @@ pipeline {
     			    },
                     "OPA Conftest":{
     				    sh 'docker run --rm -v /var/jenkins_home/workspace/devsecops:/project openpolicyagent/conftest test --policy opa-docker-security.rego /project/docker/Dockerfile'
-'
     			    }
       	        )
             }
