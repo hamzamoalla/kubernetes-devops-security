@@ -50,7 +50,7 @@ pipeline {
           steps {
               script {
                   // Using the secret file stored in Jenkins for the kubeconfig
-                  withCredentials([file(credentialsId: 'kubeconfig-minikube.txt', variable: 'KUBECONFIG')]) {
+                  withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
                       sh '''
                         
                         export KUBECONFIG=${KUBECONFIG}
