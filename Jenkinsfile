@@ -47,13 +47,7 @@ pipeline {
             }
         }
 
-        stage('Build Variable Image') {
-            steps {
-                script {
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                }
-            }
-        }
+        
         stage('Vulnerability Scan - Docker') {
             steps {
                 parallel(
@@ -67,6 +61,13 @@ pipeline {
     				    sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest ls /project'
     			    }
       	        )
+            }
+        }
+        stage('Build Variable Image') {
+            steps {
+                script {
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                }
             }
         }
         
