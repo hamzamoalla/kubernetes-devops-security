@@ -13,17 +13,17 @@ pipeline {
         stage('Build Artifact') {
             steps {
                 sh "mvn clean package -DskipTests=true"
-                archiveArtifacts artifacts: 'target/*.jar' // Archive the JAR file
+                archive 'target/*.jar' // so that they can be downloaded later
             }
         }
 
         stage('Unit Tests - JUnit and Jacoco') {
-            steps {
+            steps { 
                 sh "mvn test"
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    junit 'target/surefire-reports/*.xml' 
                     jacoco execPattern: 'target/jacoco.exec'
                 }
             }
@@ -52,7 +52,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker_hub_repo', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
-                        sh "echo \$DOCKER_HUB_PASSWORD | docker login -u \$DOCKER_HUB_USERNAME --password-stdin"
+                        sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
                 }
