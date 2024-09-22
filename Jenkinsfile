@@ -56,34 +56,14 @@ pipeline {
                     },
                     "Trivy Scan": {
                         sh "bash trivy-docker-image-scan.sh"
-                    },
-                    "OPA Conftest": {
-                        script {
-                            // Navigate to the 'deploy' directory
-                            dir('deploy') {
-                                // Remove existing clone if it exists
-                                sh '''
-                                if [ -d "kubernetes-devops-security" ]; then
-                                    rm -rf kubernetes-devops-security
-                                fi
-                                '''
-        
-                                // Clone the repository using credentials
-                                withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                                    sh "git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/hamzamoalla/kubernetes-devops-security.git"
-                                }
-        
-                                // Run the Conftest test using the cloned directory
-                                sh '''
-                                docker run --rm -v ${WORKSPACE}/deploy/kubernetes-devops-security:/project alpine ls /project
-                                '''
-        
-                                // Optional: Cleanup the cloned repository
-                                // sh "rm -rf kubernetes-devops-security"
-                            }
-                        }
                     }
                 )
+            }
+        }
+
+        stage('Vulnerability Scan - k8s') {
+            steps {
+                sh "bash kubesec-scan.sh"
             }
         }
 
