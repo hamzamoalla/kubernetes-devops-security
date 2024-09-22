@@ -58,11 +58,27 @@ pipeline {
                         sh "bash trivy-docker-image-scan.sh"
                     },
                     "OPA Conftest": {
-                        sh 'docker run -v $(pwd):/project openpolicyagent/conftest test --policy /project/opa-docker-security.rego /project/Dockerfile'
+                        script {
+                            // Define the GitHub repository and the target directory
+                            def repoUrl = 'https://github.com/hamzamoalla/kubernetes-devops-security.git'
+                            def targetDir = 'project-clone'
+        
+                            // Clone the repository using credentials
+                            withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                                sh "git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@${repoUrl} ${targetDir}"
+                            }
+        
+                            // Run the Conftest test using the cloned directory
+                            sh "docker run -v ${pwd}/${targetDir}:/project openpolicyagent/conftest test --policy /project/opa-docker-security.rego /project/Dockerfile"
+        
+                            // Optional: Cleanup the cloned repository
+                            sh "rm -rf ${targetDir}"
+                        }
                     }
                 )
             }
         }
+
         
         // stage('Build Variable Image') {
         //     steps {
