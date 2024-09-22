@@ -58,8 +58,7 @@ pipeline {
     				    sh "bash trivy-docker-image-scan.sh"
     			    },
                     "OPA Conftest":{
-    				    sh 'docker run --mount type=bind,source=$(pwd),target=/project --name redis -d redis:latest'
-
+    				    sh 'docker run --mount type=bind,source=${WORKSPACE},target=/project --name redis -d redis:latest'
     			    }
       	        )
             }
