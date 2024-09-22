@@ -65,7 +65,7 @@ pipeline {
         
                             // Clone the repository using credentials
                             withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                                sh "git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@${repoUrl} ${targetDir}"
+                                sh "git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/hamzamoalla/kubernetes-devops-security.git ${targetDir}"
                             }
         
                             // Run the Conftest test using the cloned directory
