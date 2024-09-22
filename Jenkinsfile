@@ -59,20 +59,26 @@ pipeline {
                     },
                     "OPA Conftest": {
                         script {
-                            // Define the GitHub repository and the target directory
-                            def repoUrl = 'https://github.com/hamzamoalla/kubernetes-devops-security.git'
-                            def targetDir = 'project-clone'
+                            // Navigate to the 'deploy' directory
+                            dir('deploy') {
+                                // Remove existing clone if it exists
+                                sh '''
+                                if [ -d "kubernetes-devops-security" ]; then
+                                    rm -rf kubernetes-devops-security
+                                fi
+                                '''
         
-                            // Clone the repository using credentials
-                            withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                                sh "git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/hamzamoalla/kubernetes-devops-security.git ${targetDir}"
+                                // Clone the repository using credentials
+                                withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                                    sh "git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/hamzamoalla/kubernetes-devops-security.git"
+                                }
+        
+                                // Run the Conftest test using the cloned directory
+                                sh "docker run --rm -v ${PWD}/kubernetes-devops-security:/project openpolicyagent/conftest test --policy /project/opa-docker-security.rego /project/Dockerfile"
+        
+                                // Optional: Cleanup the cloned repository
+                                // sh "rm -rf kubernetes-devops-security"
                             }
-        
-                            // Run the Conftest test using the cloned directory
-                            sh "docker run -v /var/jenkins_home/workspace/devsecops/project-clone:/project alpine ls /project"
-        
-                            // Optional: Cleanup the cloned repository
-                            // sh "rm -rf ${targetDir}"
                         }
                     }
                 )
