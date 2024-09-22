@@ -74,7 +74,7 @@ pipeline {
                                 }
         
                                 // Run the Conftest test using the cloned directory
-                                sh "docker run -v ${PWD}/kubernetes-devops-security:/project alpine ls /project"
+                                sh "docker run -v /kubernetes-devops-security:/project alpine ls /project"
         
                                 // Optional: Cleanup the cloned repository
                                 // sh "rm -rf kubernetes-devops-security"
