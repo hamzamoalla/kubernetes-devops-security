@@ -60,21 +60,29 @@ pipeline {
                 )
             }
         }
-
+        stage('Build Variable Image') {
+            steps {
+                script {
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                }
+            }
+        }
+        
         stage('Vulnerability Scan - k8s') {
             steps {
-                sh "bash kubesec-scan.sh"
+                parallel(
+                    "Kubesec Scan": {
+                        sh "bash kubesec-scan.sh"
+                    },
+                    "Trivy Scan": {
+                        sh "bash trivy-k8s-scan.sh"
+                    }
+                )
             }
         }
 
         
-        // stage('Build Variable Image') {
-        //     steps {
-        //         script {
-        //             sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-        //         }
-        //     }
-        // }
+        
         
        
 
