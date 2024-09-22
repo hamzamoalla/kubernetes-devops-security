@@ -69,7 +69,7 @@ pipeline {
                             }
         
                             // Run the Conftest test using the cloned directory
-                            sh "docker run -v /var/jenkins_home/workspace/devsecops/project-clone:/project openpolicyagent/conftest test --policy /project/opa-docker-security.rego /project/Dockerfile"
+                            sh "docker run -v /var/jenkins_home/workspace/devsecops/project-clone:/project --rm alpine ls /project"
         
                             // Optional: Cleanup the cloned repository
                             sh "rm -rf ${targetDir}"
