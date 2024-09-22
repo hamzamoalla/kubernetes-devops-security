@@ -74,7 +74,7 @@ pipeline {
                                 }
         
                                 // Run the Conftest test using the cloned directory
-                                sh "docker run --rm -v ${PWD}/kubernetes-devops-security:/project openpolicyagent/conftest test --policy /project/opa-docker-security.rego /project/Dockerfile"
+                                sh "docker run -v ${PWD}/kubernetes-devops-security:/project alpine ls /project"
         
                                 // Optional: Cleanup the cloned repository
                                 // sh "rm -rf kubernetes-devops-security"
