@@ -67,6 +67,17 @@ pipeline {
                 }
             }
         }
+        stage('Push Images to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker_hub_repo', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
+                        sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
+                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    }
+                }
+            }
+        }
+
         
         stage('Vulnerability Scan - k8s') {
             steps {
@@ -103,17 +114,7 @@ pipeline {
           }
         }
         
-        // stage('Push Images to Docker Hub') {
-        //     steps {
-        //         script {
-        //             withCredentials([usernamePassword(credentialsId: 'docker_hub_repo', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
-        //                 sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
-        //                 sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-        //             }
-        //         }
-        //     }
-        // }
-
+        
         // stage('Deploy to Kubernetes') {
         //     steps {
         //         script {
