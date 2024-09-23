@@ -19,12 +19,12 @@ spec:
       containers:
       - image: hamzamoalla/my_repo:devsecops-6
         name: devsecops-container
-        imagePullSecrets:
-          - name: docker-sec
         securityContext:
           runAsNonRoot: true
           runAsUser: 100
           readOnlyRootFilesystem: true
+      imagePullSecrets:
+        - name: docker-sec
 ---
 apiVersion: v1
 kind: Service
