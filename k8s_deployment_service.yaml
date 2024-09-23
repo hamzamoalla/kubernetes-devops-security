@@ -17,10 +17,10 @@ spec:
     spec:
       serviceAccountName: default
       containers:
-      imagePullSecrets:
-        - name: docker-sec
       - image: hamzamoalla/my_repo:devsecops-6
         name: devsecops-container
+        imagePullSecrets:
+          - name: docker-sec
         securityContext:
           runAsNonRoot: true
           runAsUser: 100
