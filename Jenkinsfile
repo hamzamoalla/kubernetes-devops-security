@@ -84,13 +84,19 @@ rpipeline {
           steps {
             parallel(
               "Deployment": {
-                withKubeConfig([credentialsId: 'kubeconfig-cred']) {
-                  sh "bash k8s-deployment.sh"
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                        bash k8s-deployment.sh
+                    '''
                 }
               },
               "Rollout Status": {
-                withKubeConfig([credentialsId: 'kubeconfig-cred']) {
-                  sh "bash k8s-deployment-rollout-status.sh"
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                        bash k8s-deployment-rollout-status.sh
+                    '''
                 }
               }
             )
