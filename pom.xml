@@ -19,6 +19,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<tomcat.version>9.0.43</tomcat.version>
+		<spring-security.version>5.4.4</spring-security.version>
 	</properties>
 
 	<dependencies>
@@ -37,6 +39,17 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.2.30</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -45,54 +58,56 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
-				<executions>
-					<execution>
-					<goals>
-					<goal>prepare-agent</goal>
-					</goals>
-					</execution>
-					<execution>
-					<id>report</id>
-					<phase>test</phase>
-					<goals>
-					<goal>report</goal>
-					</goals>
-					</execution>
-				</executions> 
-			</plugin>
-			
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-maven</artifactId>
-				<version>1.5.0</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.pitest</groupId>
-						<artifactId>pitest-junit5-plugin</artifactId>
-						<version>0.12</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<mutationThreshold>70</mutationThreshold>
-					<outputFormats>
-						<outputFormat>XML</outputFormat>
-						<outputFormat>HTML</outputFormat>
-					</outputFormats> 
-				</configuration>
-			</plugin>
+			<!--                   Jacoco Plugin                   -->
+			   <plugin>
+			    <groupId>org.jacoco</groupId>
+			    <artifactId>jacoco-maven-plugin</artifactId>
+			    <version>0.8.5</version>
+			    <executions>
+			     <execution>
+			      <goals>
+			       <goal>prepare-agent</goal>
+			      </goals>
+			     </execution>
+			     <execution>
+			      <id>report</id>
+			      <phase>test</phase>
+			      <goals>
+			       <goal>report</goal>
+			      </goals>
+			     </execution>
+			    </executions>
+			   </plugin>
 
-			<plugin>
+			   <!--                   PITest Mutation Plugin                   -->
+			   <plugin>
+			    <groupId>org.pitest</groupId>
+			    <artifactId>pitest-maven</artifactId>
+			    <version>1.5.0</version>
+			    <dependencies>
+			     <dependency>
+			      <groupId>org.pitest</groupId>
+			      <artifactId>pitest-junit5-plugin</artifactId>
+			      <version>0.12</version>
+			     </dependency>
+			    </dependencies>
+			    <configuration>
+			     <mutationThreshold>70</mutationThreshold>
+			     <outputFormats>
+			             <outputFormat>XML</outputFormat>
+			             <outputFormat>HTML</outputFormat>
+			        </outputFormats>
+			    </configuration>
+			   </plugin>
+
+			<!--                   Dependency Check Plugin                   -->
+			   <plugin>
 			    <groupId>org.owasp</groupId>
 			    <artifactId>dependency-check-maven</artifactId>
 			    <version>6.1.6</version>
 			    <configuration>
 			     <format>ALL</format>
-			     <failBuildOnCVSS>20</failBuildOnCVSS> <!-- fail the build for CVSS greater than or equal to 9 -->
+			     <failBuildOnCVSS>8</failBuildOnCVSS> <!-- fail the build for CVSS greater than or equal to 9 -->
 
 			     <!-- 
 			      use internal mirroring of CVE contents 
@@ -109,6 +124,7 @@
 			                 -->
 			    </configuration>
 			   </plugin>
+
 		</plugins>
 	</build>
 
