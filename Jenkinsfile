@@ -4,6 +4,9 @@ pipeline {
         maven 'maven' // Specify the version of Maven you want to use
     }
     environment {
+        deploymentName = "devsecops"
+        containerName = "devsecops-container"
+        serviceName = "devsecops-svc"
         DOCKER_HUB_CREDENTIALS = credentials('docker_hub_repo')
         IMAGE_NAME = "hamzamoalla/my_repo"
         IMAGE_TAG = "devsecops-${env.BUILD_NUMBER}" // Use the Jenkins build number as the version
