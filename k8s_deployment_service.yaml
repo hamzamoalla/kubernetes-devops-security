@@ -17,14 +17,16 @@ spec:
     spec:
       serviceAccountName: default
       containers:
-      - image: hamzamoalla/my_repo:devsecops-6
-        name: devsecops-container
+      - name: devsecops-container
+        image: hamzamoalla/my_repo:devsecops-6
         securityContext:
           runAsNonRoot: true
           runAsUser: 100
           readOnlyRootFilesystem: true
+        ports:
+        - containerPort: 8080
       imagePullSecrets:
-        - name: docker-sec
+      - name: docker-sec
 ---
 apiVersion: v1
 kind: Service
