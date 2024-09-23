@@ -1,4 +1,4 @@
-pipeline {
+rpipeline {
     agent any
     tools {
         maven 'maven' // Specify the version of Maven you want to use
@@ -84,12 +84,12 @@ pipeline {
           steps {
             parallel(
               "Deployment": {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
+                withKubeConfig([credentialsId: 'kubeconfig-cred']) {
                   sh "bash k8s-deployment.sh"
                 }
               },
               "Rollout Status": {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
+                withKubeConfig([credentialsId: 'kubeconfig-cred']) {
                   sh "bash k8s-deployment-rollout-status.sh"
                 }
               }
