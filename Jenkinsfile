@@ -7,6 +7,8 @@ pipeline {
         deploymentName = "devsecops"
         containerName = "devsecops-container"
         serviceName = "devsecops-svc"
+        applicationURI="/compare/2"
+        applicationURL="http://192.168.49.2"
         DOCKER_HUB_CREDENTIALS = credentials('docker_hub_repo')
         IMAGE_NAME = "hamzamoalla/my_repo"
         IMAGE_TAG = "devsecops-${env.BUILD_NUMBER}" // Use the Jenkins build number as the version
@@ -114,6 +116,29 @@ pipeline {
                 }
               }
             )
+          }
+        }
+        
+        stage('Integration Tests - DEV') {
+          steps {
+            script {
+              try {
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                        bash integration-test.sh
+                    '''
+                }
+              } catch (e) {
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                        kubectl -n default rollout undo deploy ${deploymentName}
+                    '''
+                }
+                throw e
+              }
+            }
           }
         }
         
