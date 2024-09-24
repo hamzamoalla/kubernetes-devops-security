@@ -141,6 +141,17 @@ pipeline {
             }
           }
         }
+
+       stage('OWASP ZAP - DAST') {
+          steps {
+            withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                sh '''
+                export KUBECONFIG=${KUBECONFIG}
+                bash zap.sh
+                '''
+            }
+          }
+        }
         
         
         // stage('Deploy to Kubernetes') {
