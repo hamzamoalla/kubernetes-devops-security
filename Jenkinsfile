@@ -65,16 +65,13 @@ pipeline {
                 )
             }
         }
-        stage('Build Variable Image') {
+        stage('Build and Push Image') {
             steps {
                 script {
+                    // Build the Docker image
                     sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                }
-            }
-        }
-        stage('Push Images to Docker Hub') {
-            steps {
-                script {
+        
+                    // Log in to Docker Hub and push the image
                     withCredentials([usernamePassword(credentialsId: 'docker_hub_repo', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
                         sh "echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin"
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
@@ -82,6 +79,7 @@ pipeline {
                 }
             }
         }
+
 
         
         stage('Vulnerability Scan - k8s') {
