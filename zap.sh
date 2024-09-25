@@ -8,7 +8,7 @@ chmod 777 $(pwd)
 echo $(id -u):$(id -g)
 
 # Exécuter OWASP ZAP avec des règles personnalisées
-docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:weekly zap-api-scan.py -t $applicationURL:$PORT/v3/api-docs -f openapi -c zap_rules -r zap_report.html
+docker run -t ghcr.io/zaproxy/zaproxy:weekly zap-api-scan.py -t $applicationURL:$PORT/v3/api-docs -f openapi -r zap_report.html
 
 # Récupérer le code de sortie de l'exécution de Docker
 exit_code=$?
