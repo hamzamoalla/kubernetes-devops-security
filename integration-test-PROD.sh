@@ -2,10 +2,10 @@
 sleep 5s
 
 # echo "ok"
-# PORT=$(kubectl get svc ${serviceName} -o json | jq .spec.ports[].nodePort)
+PORT=$(kubectl -n prod get svc ${serviceName} -o json | jq .spec.ports[].nodePort)
 
-### Istio Ingress Gateway Port 80 - NodePort
-PORT=$(kubectl -n istio-system get svc istio-ingressgateway -o json | jq '.spec.ports[] | select(.port == 80)' | jq .nodePort)
+# Istio Ingress Gateway Port 80 - NodePort
+# PORT=$(kubectl -n istio-system get svc istio-ingressgateway -o json | jq '.spec.ports[] | select(.port == 80)' | jq .nodePort)
 
 
 echo $PORT

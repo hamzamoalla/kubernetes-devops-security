@@ -20,7 +20,7 @@ spec:
       - name: vol
         emptyDir: {}
       containers:
-      - image: replace
+      - image: hamzamoalla/my_repo:devsecops-6
         name: devsecops-container
         volumeMounts:
           - mountPath: /tmp
@@ -40,6 +40,8 @@ spec:
          limits:
           memory: "512Mi"
           cpu: "500m"
+      imagePullSecrets:
+      - name: docker-sec
 ---
 apiVersion: v1
 kind: Service
