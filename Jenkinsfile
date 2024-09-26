@@ -48,7 +48,7 @@ pipeline {
         
         stage('sonar') {
             steps {
-                 sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.4:9000 -Dsonar.token=sqb_8df36135b1ea9c277fe6c295b31e49b3357360ff"
+                 sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.5:9000 -Dsonar.token=sqb_8df36135b1ea9c277fe6c295b31e49b3357360ff"
             }
         }
 
