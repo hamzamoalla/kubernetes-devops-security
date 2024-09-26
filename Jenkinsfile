@@ -34,23 +34,23 @@ pipeline {
             }
         }
 
-        //  stage('Mutation Tests - PIT') {
-        //     steps {
-        //         sh "mvn org.pitest:pitest-maven:mutationCoverage"
-        //     }
-        //     post {
-        //         always {
-        //             pitmutation mutationStatsFile: 'target/pit-reports/**/mutations.xml'
-        //         }
-        //     }
-        // }
+         stage('Mutation Tests - PIT') {
+            steps {
+                sh "mvn org.pitest:pitest-maven:mutationCoverage"
+            }
+            post {
+                always {
+                    pitmutation mutationStatsFile: 'target/pit-reports/**/mutations.xml'
+                }
+            }
+        }
 
         
-        // stage('sonar') {
-        //     steps {
-        //          sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.4:9000 -Dsonar.token=sqp_164ad3e63f80d14d4c64b865c32cfd9db7866945"
-        //     }
-        // }
+        stage('sonar') {
+            steps {
+                 sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.4:9000 -Dsonar.token=sqp_164ad3e63f80d14d4c64b865c32cfd9db7866945"
+            }
+        }
 
         
         stage('Vulnerability Scan - Docker') {
