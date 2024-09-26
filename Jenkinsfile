@@ -154,16 +154,20 @@ pipeline {
           steps {
             parallel(
               "Deployment": {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                  sh '''
-                  sed -i "s|image: hamzamoalla/my_repo:devsecops-.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" k8s_PROD-deployment_service.yaml
-                  '''
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                        sed -i "s|image: hamzamoalla/my_repo:devsecops-.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" k8s_PROD-deployment_service.yaml
+                    '''
                   sh "kubectl -n prod apply -f k8s_PROD-deployment_service.yaml"
                 }
               },
               "Rollout Status": {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                  sh "bash k8s-PROD-deployment-rollout-status.sh"
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                    '''
+                    sh "bash k8s-PROD-deployment-rollout-status.sh"
                 }
               }
             )
@@ -174,12 +178,18 @@ pipeline {
           steps {
             script {
               try {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                    '''
                   sh "bash integration-test-PROD.sh"
                 }
               } catch (e) {
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                  sh "kubectl -n prod rollout undo deploy ${deploymentName}"
+                withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=${KUBECONFIG}
+                    '''
+                    sh "kubectl -n prod rollout undo deploy ${deploymentName}"
                 }
                 throw e
               }
