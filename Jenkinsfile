@@ -155,7 +155,9 @@ pipeline {
             parallel(
               "Deployment": {
                 withKubeConfig([credentialsId: 'kubeconfig']) {
-                  sh "sed -i 's#replace#${imageName}#g' k8s_PROD-deployment_service.yaml"
+                  sh '''
+                  sed -i "s|image: hamzamoalla/my_repo:devsecops-.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|" k8s_PROD-deployment_service.yaml
+                  '''
                   sh "kubectl -n prod apply -f k8s_PROD-deployment_service.yaml"
                 }
               },
