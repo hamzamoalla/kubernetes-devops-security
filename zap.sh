@@ -8,11 +8,11 @@ chmod 777 $(pwd)
 echo $(id -u):$(id -g)
 
 # Exécuter OWASP ZAP avec des règles personnalisées
-docker run -it --rm -T ghcr.io/zaproxy/zaproxy:weekly /zap/bin/zap-bash -c "
+docker run --rm ghcr.io/zaproxy/zaproxy:latest /zap/bin/zap-bash -c "
     cd /zap/wrk
     zap-api-scan.py -t $applicationURL:$PORT/v3/api-docs -f openapi -c zap_rules -r zap_report.html
 "
-
+sleep 5
 # Vérifier si le scan ZAP a trouvé des vulnérabilités
 exit_code=$?
 
@@ -25,7 +25,7 @@ if [ ! -f "/zap/wrk/zap_report.html" ]; then
 fi
 
 # Copier le rapport du conteneur vers l'hôte
-docker cp $(docker ps -q -f ancestor=ghcr.io/zaproxy/zaproxy:weekly):/zap/wrk/zap_report.html ./owasp-zap-report/
+docker cp $(docker ps -q -f ancestor=ghcr.io/zaproxy/zaproxy:latest):/zap/wrk/zap_report.html ./owasp-zap-report/
 
 echo "Exit Code : $exit_code"
 
