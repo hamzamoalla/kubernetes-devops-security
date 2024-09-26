@@ -8,21 +8,27 @@ chmod 777 $(pwd)
 echo $(id -u):$(id -g)
 
 # Exécuter OWASP ZAP avec des règles personnalisées
-docker run -it --rm ghcr.io/zaproxy/zaproxy:weekly /zap/bin/zap-bash -c "
+docker run -it --rm -T ghcr.io/zaproxy/zaproxy:weekly /zap/bin/zap-bash -c "
     cd /zap/wrk
     zap-api-scan.py -t $applicationURL:$PORT/v3/api-docs -f openapi -c zap_rules -r zap_report.html
 "
 
-# Récupérer le code de sortie de l'exécution de Docker
+# Vérifier si le scan ZAP a trouvé des vulnérabilités
 exit_code=$?
 
 # Créer un répertoire pour stocker le rapport ZAP
 mkdir -p owasp-zap-report
-mv zap_report.html owasp-zap-report
+
+if [ ! -f "/zap/wrk/zap_report.html" ]; then
+    echo "Le fichier raport.html n'a pas été généré dans le conteneur."
+    exit 1
+fi
+
+# Copier le rapport du conteneur vers l'hôte
+docker cp $(docker ps -q -f ancestor=ghcr.io/zaproxy/zaproxy:weekly):/zap/wrk/zap_report.html ./owasp-zap-report/
 
 echo "Exit Code : $exit_code"
 
-# Vérifier si le scan ZAP a trouvé des vulnérabilités
 case $exit_code in
     0) echo "OWASP ZAP did not report any Risk";;
     1) echo "OWASP ZAP Report has either Low/Medium/High Risk. Please check the HTML Report";;
