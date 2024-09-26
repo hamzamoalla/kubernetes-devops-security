@@ -150,7 +150,40 @@ pipeline {
             }
           }
         }
-        
+        stage('K8S Deployment - PROD') {
+          steps {
+            parallel(
+              "Deployment": {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                  sh "sed -i 's#replace#${imageName}#g' k8s_PROD-deployment_service.yaml"
+                  sh "kubectl -n prod apply -f k8s_PROD-deployment_service.yaml"
+                }
+              },
+              "Rollout Status": {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                  sh "bash k8s-PROD-deployment-rollout-status.sh"
+                }
+              }
+            )
+          }
+        }
+    
+        stage('Integration Tests - PROD') {
+          steps {
+            script {
+              try {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                  sh "bash integration-test-PROD.sh"
+                }
+              } catch (e) {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                  sh "kubectl -n prod rollout undo deploy ${deploymentName}"
+                }
+                throw e
+              }
+            }
+          }
+        }   
         
         // stage('Deploy to Kubernetes') {
         //     steps {
