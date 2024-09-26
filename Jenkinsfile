@@ -7,7 +7,7 @@ pipeline {
         deploymentName = "devsecops"
         containerName = "devsecops-container"
         serviceName = "devsecops-svc"
-        applicationURI="/compare/2"
+        applicationURI="/increment/99"
         applicationURL="http://192.168.49.2"
         DOCKER_HUB_CREDENTIALS = credentials('docker_hub_repo')
         IMAGE_NAME = "hamzamoalla/my_repo"
