@@ -53,18 +53,18 @@ pipeline {
         // }
 
         
-        stage('Vulnerability Scan - Docker') {
-            steps {
-                parallel(
-                    "Dependency Scan": {
-                        sh "mvn dependency-check:check"
-                    },
-                    "Trivy Scan": {
-                        sh "bash trivy-docker-image-scan.sh"
-                    }
-                )
-            }
-        }
+        // stage('Vulnerability Scan - Docker') {
+        //     steps {
+        //         parallel(
+        //             "Dependency Scan": {
+        //                 sh "mvn dependency-check:check"
+        //             },
+        //             "Trivy Scan": {
+        //                 sh "bash trivy-docker-image-scan.sh"
+        //             }
+        //         )
+        //     }
+        // }
         stage('Build and Push Image') {
             steps {
                 script {
@@ -82,18 +82,18 @@ pipeline {
 
 
         
-        // stage('Vulnerability Scan - k8s') {
-        //     steps {
-        //         parallel(
-        //             "Kubesec Scan": {
-        //                 sh "bash kubesec-scan.sh"
-        //             },
-        //             "Trivy Scan": {
-        //                 sh "bash trivy-k8s-scan.sh"
-        //             }
-        //         )
-        //     }
-        // }
+        stage('Vulnerability Scan - k8s') {
+            steps {
+                parallel(
+                    "Kubesec Scan": {
+                        sh "bash kubesec-scan.sh"
+                    },
+                    "Trivy Scan": {
+                        sh "bash trivy-k8s-scan.sh"
+                    }
+                )
+            }
+        }
         stage('K8S Deployment - DEV') {
           steps {
             parallel(
