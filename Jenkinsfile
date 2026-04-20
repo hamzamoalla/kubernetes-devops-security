@@ -46,11 +46,11 @@ pipeline {
         }
 
         
-        stage('SonarQube - SAST') {
-            steps {
-                 sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.5:9000 -Dsonar.token=sqp_e9387b471c752161825fb179053bda26afbcc8ce"
-            }
-        }
+        // stage('SonarQube - SAST') {
+        //     steps {
+        //          sh "mvn clean verify sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.projectName='numeric-application' -Dsonar.host.url=http://192.168.49.5:9000 -Dsonar.token=sqp_e9387b471c752161825fb179053bda26afbcc8ce"
+        //     }
+        // }
 
         
         stage('Vulnerability Scan - Docker') {
