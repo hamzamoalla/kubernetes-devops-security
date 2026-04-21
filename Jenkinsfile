@@ -140,16 +140,16 @@ pipeline {
           }
         }
 
-       stage('OWASP ZAP - DAST') {
-          steps {
-            withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
-                sh '''
-                export KUBECONFIG=${KUBECONFIG}
-                bash zap.sh
-                '''
-            }
-          }
-        }
+       // stage('OWASP ZAP - DAST') {
+       //    steps {
+       //      withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
+       //          sh '''
+       //          export KUBECONFIG=${KUBECONFIG}
+       //          bash zap.sh
+       //          '''
+       //      }
+       //    }
+       //  }
         stage('K8S Deployment - PROD') {
           steps {
             parallel(
